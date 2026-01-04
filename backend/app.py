@@ -11,16 +11,24 @@ CORS(app)  # Enable CORS for all routes
 GEMINI_API_URL = os.getenv('GEMINI_API_URL', 'https://generativelanguage.googleapis.com')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-print(f"🚀 Flask app initialized")
-print(f"🔑 API Key configured: {'Yes' if GEMINI_API_KEY else 'No'}")
+print(f"Flask app initialized")
+print(f"API Key configured: {'Yes' if GEMINI_API_KEY else 'No'}")
 
 
 def build_prompt(email_content, tone):
     """Build the prompt for email generation"""
-    prompt = "Generate a professional email reply for the following email:"
+    prompt = """Generate a email reply for the following email. 
+        IMPORTANT FORMATTING RULES:
+        - Use proper line breaks (not \\n escape sequences)
+        - Format the email with clear paragraphs
+        - Use bullet points with * or - for lists (not markdown ** bold **)
+        - Keep the formatting clean and ready to paste
+        - Do not use markdown formatting like ** for bold or ## for headers
+        - Use plain text formatting only
+    """
     if tone and tone.strip():
-        prompt += f" Use a {tone} tone."
-    prompt += f"\nOriginal Email: \n{email_content}"
+        prompt += f"Use a {tone} tone.\n\n"
+    prompt += f"Original Email:\n{email_content}\n\nGenerate a well-formatted reply:"
     return prompt
 
 
@@ -78,7 +86,11 @@ def generate_email():
         # Generate email reply
         reply = generate_email_reply(email_content, tone)
         
-        return jsonify(reply), 200
+        # Clean up the reply - remove any markdown formatting and extra escapes
+        reply = reply.strip()
+        
+        # Return as plain text response
+        return reply, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     
     except requests.exceptions.RequestException as e:
         print(f"API request failed: {str(e)}")

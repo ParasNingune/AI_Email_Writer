@@ -29,9 +29,17 @@ function App() {
         emailContent,
         tone,
       });
-      setgeneratedReply(
-        typeof res.data === "string" ? res.data : JSON.stringify(res.data)
-      );
+      
+      // Handle the response - it's now plain text
+      let reply = typeof res.data === "string" ? res.data : JSON.stringify(res.data);
+      
+      // Clean up any escaped characters if present
+      if (reply.startsWith('"') && reply.endsWith('"')) {
+        reply = reply.slice(1, -1);
+      }
+      reply = reply.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+      
+      setgeneratedReply(reply);
     } catch (error) {
       console.error(error);
     } finally {

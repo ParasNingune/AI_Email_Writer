@@ -55,12 +55,7 @@ function injectButton() {
             button.disabled = true;
             const emailContent = getEmailContent();
 
-            // Update this URL to your Python backend
-            // For local: http://localhost:8080
-            // For production: your deployed backend URL
-            const API_URL = 'http://localhost:8080';
-            
-            const res = await fetch(`${API_URL}/api/email/generate`, {
+            const res = await fetch('https://ai-email-writer-1-v7tp.onrender.com/api/email/generate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +70,22 @@ function injectButton() {
             if(!res.ok) {
                 throw new Error("API Request Failed");
             }
-            const generatedReply = await res.text();
+            
+            // Get the plain text response
+            let generatedReply = await res.text();
+            
+            // Remove any JSON quotes if present
+            if (generatedReply.startsWith('"') && generatedReply.endsWith('"')) {
+                generatedReply = generatedReply.slice(1, -1);
+            }
+            
+            // Unescape newlines and other escape sequences
+            generatedReply = generatedReply
+                .replace(/\\n/g, '\n')
+                .replace(/\\t/g, '\t')
+                .replace(/\\"/g, '"')
+                .replace(/\\\\/g, '\\');
+            
             const composeBox = document.querySelector('[role="textbox"][g_editable="true"]')
 
             if(composeBox){
