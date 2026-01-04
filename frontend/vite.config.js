@@ -8,7 +8,7 @@ export default defineConfig({
     proxy: {
       // Proxy API requests to the backend during development
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'https://ai-email-writer-1-v7tp.onrender.com',
         changeOrigin: true,
       }
     }
