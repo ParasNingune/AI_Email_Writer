@@ -1,95 +1,119 @@
-📧 AI Email Writer
+# AI Email Writer
 
-An AI-powered email writing assistant built with Python Flask, React, and a custom Chrome Extension, designed to generate intelligent email replies with personalized tones using Google's Gemini API.
+AI Email Writer is a full-stack app that generates email replies with Google Gemini.
 
-**🚀 Features**
+## What’s Included
 
-✨ AI-Powered Drafting – Automates up to 70% of repetitive email writing using Google Gemini AI.
+- **Backend**: Flask API (`/backend`) for reply generation
+- **Frontend**: React + Vite web UI (`/frontend`)
+- **Extension**: Chrome extension for Gmail (`/extension`)
 
-🎭 Tone Customization – Generates replies with different tones (professional, friendly, casual, etc.) for improved personalization.
+## Tech Stack
 
-🤖 Gemini AI Integration – Uses Google's Gemini API for intelligent email generation.
+- Python 3.11, Flask, Requests
+- React 19, Vite, Material UI, Axios
+- Chrome Extension (Manifest v3)
+- Google Gemini API
 
-🌐 Full-Stack Architecture – Python Flask backend, React frontend, and Chrome Extension for real-time use.
+## Project Structure
 
-🐳 Containerized Deployment – Backend containerized with Docker for easy deployment.
-
-**🛠️ Tech Stack**
-
-Frontend: React, Material-UI, Vite
-
-Backend: Python, Flask, Flask-CORS, Requests
-
-Extension: Custom Chrome Extension (Vanilla JavaScript)
-
-APIs: Google Gemini API for AI-powered email generation
-
-DevOps: Docker, GitHub
-
-
-
-
-
-**⚙️ Installation & Setup**
-
-1️⃣ **Clone the repository**
-
-```bash
-git clone https://github.com/ParasNingune/AI-Email-Writer.git
-cd AI-Email-Writer
+```text
+AI_Email_Writer/
+├── backend/
+│   ├── app.py
+│   ├── requirements.txt
+│   ├── .env.example
+│   └── Dockerfile
+├── frontend/
+│   ├── src/
+│   ├── package.json
+│   └── .env.example
+└── extension/
+    ├── manifest.json
+    ├── content.js
+    └── content.css
 ```
 
-2️⃣ **Backend (Python Flask)**
+## Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- Gemini API key: https://makersuite.google.com/app/apikey
+
+## Local Setup
+
+### 1) Start Backend
 
 ```bash
-cd Backend/python-backend
-
-# Install dependencies
+cd backend
 pip install -r requirements.txt
-
-# Set up environment variables
 cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
 ```
 
-**Environment Variables:**
-- `GEMINI_API_URL` = `https://generativelanguage.googleapis.com`
-- `GEMINI_API_KEY` = Your Gemini API key (get it from [Google AI Studio](https://makersuite.google.com/app/apikey))
-- `PORT` = `8080` (optional, defaults to 8080)
+Set your key in `backend/.env`:
 
-**Run the backend:**
+```env
+GEMINI_API_KEY=your_actual_api_key_here
+```
+
+Run the API:
+
 ```bash
-# Development mode
 python app.py
 ```
-3️⃣ **Frontend (React + Vite)**
+
+Backend runs on `http://localhost:8080`.
+
+### 2) Start Frontend
 
 ```bash
-cd Frontend
-
-# Install dependencies
+cd frontend
 npm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env if needed (defaults to http://localhost:8080)
-
-# Run development server
 npm run dev
 ```
 
-The frontend will start on `http://localhost:5173`
+Frontend runs on `http://localhost:5173`.
 
-4️⃣ **Chrome Extension**
+## API Endpoint
 
-1. Navigate to `chrome://extensions/` in your browser
-2. Enable **Developer Mode** (top right toggle)
-3. Click **Load Unpacked**
-4. Select the `Extension/` folder
-5. Update the `API_URL` in `Extension/content.js` to match your backend URL
+### `POST /api/email/generate`
 
-**🌍 Deployment**
+Request:
 
-- **Frontend**: Can be deployed to Vercel, Netlify, or any static hosting
-- **Backend**: Can be deployed to Render, Railway, Heroku, or any platform supporting Python
-- **Extension**: Chrome Web Store (for production) or Developer Mode (for testing)
+```json
+{
+  "emailContent": "Original email content",
+  "tone": "Professional"
+}
+```
+
+Response: plain text generated reply.
+
+## Chrome Extension Setup (Optional)
+
+1. Open `chrome://extensions/`
+2. Enable **Developer mode**
+3. Click **Load unpacked**
+4. Select the `extension/` folder
+5. Open Gmail and start composing/replying
+
+## Notes
+
+- `frontend/src/App.jsx` currently calls a deployed backend URL directly.
+- `extension/content.js` also calls the deployed backend URL directly.
+- If you want both to use local backend, update those URLs to `http://localhost:8080/api/email/generate`.
+
+## Useful Commands
+
+### Frontend
+
+- `npm run dev`
+- `npm run build`
+- `npm run lint`
+- `npm run preview`
+
+### Backend (production-style local run)
+
+```bash
+gunicorn --bind 0.0.0.0:8080 --workers 4 app:app
+```
